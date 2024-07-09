@@ -1,0 +1,24 @@
+
+
+app.get('/test', (req, res) => {
+});
+
+app.post('/api/store', (req, res) => {
+    (async () => {
+        try{
+            await db.collection('users').doc('/' + req.body.id + '/')
+            .create({
+                id: req.body.id,
+                nome: req.body.nome, 
+            });
+
+            return res.status(201).send('success');
+        } catch(err) {
+            console.error(err)
+            return res.status(500).send(err)
+        }
+    })();
+})
+
+
+module.exports = app
