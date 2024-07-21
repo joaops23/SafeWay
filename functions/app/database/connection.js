@@ -1,5 +1,5 @@
-admin = require('firebase-admin');
-require('dotenv').config()
+import admin from 'firebase-admin';
+import 'dotenv/config';
 
 // Resgata a chave do proprietário firebase
 var serviceAccount = require('./../../config/secret.json');
@@ -11,4 +11,4 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-module.exports = db
+export default db;
