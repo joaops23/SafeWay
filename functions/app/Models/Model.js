@@ -1,16 +1,67 @@
-import {doc, setDoc} from 'firebase/firestore';
+import {doc, setDoc, getDoc} from 'firebase/firestore';
 import db from "./../database/connection.js";
 
 export default class Model
 {
+
+    STATUS_CADASTRADO = 201
+    STATUS_ERRO = 500
+
     constructor()
     {
         this.conn = db
     }
 
-    async insertUpdate(data, model, id = undefined)
+    async save(data)
     {
-        const docRef = await setDoc(doc(db, model, id), data);
-        return docRef.id;
+        // => Tratamento do campo id
+        data.id = (typeof id == "undefined") ? this.#newID() : data.id;
+
+        const cadastro = await this.insertUpdate(data, this.model, data.id)
+        if(cadastro.status == 'Success'){
+            return {status: this.STATUS_CADASTRADO, message: "Registro Inserido / Atualizado com sucesso!"}
+        } else {
+            return {status: this.STATUS_ERRO, message: cadastro.message}
+        }
+    }
+
+    #newID()
+    {
+        const id = Math.floor(Date.now() * Math.random()).toString(36)
+        return id
+    }
+
+    async insertUpdate(data, model, id)
+    {
+        try{
+            //=> Se a requisição for finalizada corretamente, retorna true
+            await setDoc(doc(db, model, id), data);
+            return {status: "Success"};
+        } catch(err) {
+
+            //=> Caso contrário, retorna um erro
+            console.error(err)
+            return {status: "Error", message: "Erro de conexão com base de dados, entre em contato com o administrador do sistema urgente!"};
+        }
+    }
+
+    /**
+     * Busca um registro na model com o Id enviado
+     * @param {string} id - Id do registro
+     */
+    async findById(id)
+    {
+        if((typeof id == 'undefined') && id.length == 0) {
+            return;
+        }
+        const docRef = doc(db, this.model, id)
+        const docSnap = await getDoc(docRef);
+
+        if(docSnap.exists()) {
+            return {status: "Success", data: docSnap.data()}
+        } else {
+            const message = `Documento id: ${id}, nó: ${this.model}. Não encontrado!`;
+            return {status: "Error", message: message};
+        }
     }
 }

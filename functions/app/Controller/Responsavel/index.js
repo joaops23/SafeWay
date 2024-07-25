@@ -4,14 +4,29 @@ const ResponsavelModel = new Responsavel();
 
 class ResponsavelController extends Controller 
 {
-    store = () => {
+    async store() {
         
-        const valida = this.#validarDadosCadastro()
+        const valida = this.#validarDadosCadastro();
         if(!valida.status) {
-            return {status: 400, message: valida.message}
+            return {status: 400, message: valida.message};
         }
 
-        return ResponsavelModel.save(this.getObjectRegister)
+        return await ResponsavelModel.save(this.getObjectRegister());
+    }
+
+
+    async findById(id)
+    {
+        // => Valida se o ID foi enviado
+        if (!id || id.length == 0) {
+            return {status: 400, message: valida.message};
+        }
+
+        const consult = await ResponsavelModel.findById(id);
+
+        
+        return {status: 200, data: consult.data};
+
     }
 
     #validarDadosCadastro = () => {
