@@ -1,4 +1,4 @@
-import {doc, setDoc, getDoc} from 'firebase/firestore';
+import {doc, setDoc, getDoc, collection, orderBy, getDocs, query, limit} from 'firebase/firestore';
 import db from "./../database/connection.js";
 
 export default class Model
@@ -35,7 +35,7 @@ export default class Model
     {
         try{
             //=> Se a requisição for finalizada corretamente, retorna true
-            await setDoc(doc(db, model, id), data);
+            await setDoc(doc(this.conn, model, id), data);
             return {status: "Success"};
         } catch(err) {
 
@@ -54,14 +54,32 @@ export default class Model
         if((typeof id == 'undefined') && id.length == 0) {
             return;
         }
-        const docRef = doc(db, this.model, id)
+        const docRef = doc(this.conn, this.model, id)
         const docSnap = await getDoc(docRef);
 
         if(docSnap.exists()) {
             return {status: "Success", data: docSnap.data()}
         } else {
-            const message = `Documento id: ${id}, nó: ${this.model}. Não encontrado!`;
+            const message = `Documento | id: ${id} | Entidade: ${this.model} | Não encontrado!`;
             return {status: "Error", message: message};
         }
+    }
+
+    async findAll(lmt, ofs, order = undefined)
+    {
+        const q = query(
+            collection(this.conn, this.model),
+            orderBy(order || 'id'),
+            limit(lmt)
+        );
+
+        const consult = await getDocs(q);
+
+        const returnData = [];
+        consult.forEach((item) => {
+            returnData.push({"id": item.id, 'data': item.data()});
+        })
+
+        return {data: returnData};
     }
 }

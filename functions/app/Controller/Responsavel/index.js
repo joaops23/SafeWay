@@ -24,9 +24,22 @@ class ResponsavelController extends Controller
 
         const consult = await ResponsavelModel.findById(id);
 
-        
-        return {status: 200, data: consult.data};
+        if(consult.status == 'Success') {
+            return {status: 200, data: consult.data};
+        } else {
+            return {status: 404, data: consult.message};
+        }
+    }
 
+    async findAll(query)
+    {
+        const limit = query.limit | 10;
+        const offset = query.offset | 0;
+
+        const consult = await ResponsavelModel.findAll(limit, offset, query.order);
+
+        return {status: 200, data: consult.data}
+        
     }
 
     #validarDadosCadastro = () => {

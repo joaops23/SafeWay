@@ -28,5 +28,17 @@ ResponsavelRouter.get("/:id", async(req, res) => {
     }
 })
 
+ResponsavelRouter.get("/", async(req, res) => {
+    try{
+
+        const response = await responsavelController.findAll(req.query);
+
+        return res.status(response.status).json(response.data);
+    } catch(err) {
+        console.error(err)
+        return res.status(500).send(err)
+    }
+})
+
 
 export default ResponsavelRouter;
