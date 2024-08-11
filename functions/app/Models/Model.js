@@ -3,19 +3,18 @@ import db from "./../database/connection.js";
 
 export default class Model
 {
-
-    STATUS_CADASTRADO = 201
-    STATUS_ERRO = 500
-
     constructor()
     {
         this.conn = db
+
+        this.STATUS_CADASTRADO = 201
+        this.STATUS_ERRO = 500
     }
 
     async save(data)
     {
         // => Tratamento do campo id
-        data.id = (typeof id == "undefined") ? this.#newID() : data.id;
+        data.id = (typeof id == "undefined") ? this.newID() : data.id;
 
         const cadastro = await this.insertUpdate(data, this.model, data.id)
         if(cadastro.status == 'Success'){
@@ -25,7 +24,7 @@ export default class Model
         }
     }
 
-    #newID()
+    newID()
     {
         const id = Math.floor(Date.now() * Math.random()).toString(36)
         return id

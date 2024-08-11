@@ -5,7 +5,7 @@
  * */
 export default class Controller
 {
-    objRegister = Object;
+    
     cosntructor() 
     {
 

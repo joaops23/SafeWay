@@ -2,5 +2,10 @@ import Model from "../Model.js";
 
 export default class Responsavel extends Model
 {
-    model = 'responsavel'
+
+    constructor()
+    {
+        super();
+        this.model = 'responsavel';
+    }
 }

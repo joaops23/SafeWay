@@ -72,3 +72,5 @@ node_modules/
 .env
 package-lock.json
 functions/config/secret.json
+
+/functions/lib

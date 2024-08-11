@@ -1,0 +1,40 @@
+{
+  "env": {
+    "es6": true,
+    "node": true,
+    "browser": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/recommended"
+  ],
+  "rules": {
+    "no-restricted-globals": ["error", "name", "length"],
+    "prefer-arrow-callback": "error",
+    "semi": ["off"],
+    "no-undef": "off"
+  },
+  "plugins": [
+    "import"
+  ],
+  "overrides": [
+    {
+      "files": ["**/*.spec.*"],
+      "env": {
+        "mocha": true
+      },
+      "rules": {}
+    }
+  ],
+  "globals": {
+    "myGlobalVariable": "readonly",
+    "anotherGlobal": "writable"
+  }
+}

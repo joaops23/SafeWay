@@ -6,7 +6,7 @@ class ResponsavelController extends Controller
 {
     async store() {
         
-        const valida = this.#validarDadosCadastro();
+        const valida = this.validarDadosCadastro();
         if(!valida.status) {
             return {status: 400, message: valida.message};
         }
@@ -42,7 +42,8 @@ class ResponsavelController extends Controller
         
     }
 
-    #validarDadosCadastro = () => {
+    validarDadosCadastro()
+    {
         let id = null;
         try{
             let responsavel = this.getObjectRegister()
