@@ -1,8 +1,8 @@
 import Controller from "./../Controller.js";
-import Responsavel from "../../Models/Responsavel/Responsavel.js";
-const ResponsavelModel = new Responsavel();
+import Escola from "../../Models/Escola/Escola.js";
+const EscolaModel = new Escola();
 
-class ResponsavelController extends Controller 
+export default class EscolaController extends Controller
 {
     async store() {
         
@@ -11,7 +11,7 @@ class ResponsavelController extends Controller
             return {status: 400, message: valida.message};
         }
 
-        return await ResponsavelModel.save(this.getObjectRegister());
+        return await EscolaModel.save(this.getObjectRegister());
     }
 
 
@@ -22,7 +22,7 @@ class ResponsavelController extends Controller
             return {status: 400, message: valida.message};
         }
 
-        const consult = await ResponsavelModel.findById(id);
+        const consult = await EscolaModel.findById(id);
 
         if(consult.status == 'Success') {
             return {status: 200, data: consult.data};
@@ -36,7 +36,7 @@ class ResponsavelController extends Controller
         const limit = query.limit | 10;
         const offset = query.offset | 0;
 
-        const consult = await ResponsavelModel.findAll(limit, offset, query.order);
+        const consult = await EscolaModel.findAll(limit, offset, query.order);
 
         return {status: 200, data: consult.data}
         
@@ -46,41 +46,37 @@ class ResponsavelController extends Controller
     {
         let id = null;
         try{
-            let responsavel = this.getObjectRegister()
-            // => validar se foi enviado o id do responsavel/usuario
-            if(('id' in responsavel) || responsavel.id != '') {
-                id = responsavel.id
+            let escola = this.getObjectRegister()
+            // => validar se foi enviado o id do escola/usuario
+            if(('id' in escola) || escola.id != '') {
+                id = escola.id
             }
-
+            
             if(!id) {
                 // => se não for enviado o id, validar se os demais atributos de entrada foram enviados
                 //=> validar: nome
-                if(!('resp_nome' in responsavel) || responsavel.resp_nome == '') {
+                if(!('esc_nome' in escola) || escola.esc_nome == '') {
                     throw new Error("Nome não informado / inválido!");
                 }
     
-                //=> validar: CPF
-                if(!('resp_documento' in responsavel) || responsavel.resp_documento == '') {
-                    throw new Error("Documento não informado / inválido!");
-                }
-    
                 //=> validar: endereco
-                if(!('resp_endereco' in responsavel) || responsavel.resp_endereco == '') {
+                if(!('esc_endereco' in escola) || escola.esc_endereco == '') {
                     throw new Error("Endereço não informado / inválido!");
                 }
-                this.setValidaEnredeco(responsavel.resp_endereco)
+                this.setValidaEnredeco(escola.esc_endereco)
                 
                 //=> validar: contato
-                if(!('resp_contato' in responsavel) || responsavel.resp_contato == '') {
+                if(!('esc_contato' in escola) || escola.esc_contato == '') {
                     throw new Error("Contato não informado / inválido!");
                 }
-                this.setValidaContato(responsavel.resp_contato)
+                this.setValidaContato(escola.esc_contato)
 
-                //=> validar: pertencentes
-                if(!('resp_pertencentes' in responsavel) || responsavel.resp_pertencentes == '') {
-                    throw new Error("Pertencentes não informados / inválidos!");
+                //=> validar: períodos
+                if(!('periodos' in escola) || escola.periodos == '' || escola.length == 0){
+                    throw new Error("Períodos de funcionamento não informado / inválido!");
                 }
-                this.setValidapertencentes(responsavel.resp_pertencentes)
+
+                this.setValidaPeriodos(escola.periodos);
             }
 
             return {status: true}
@@ -90,5 +86,3 @@ class ResponsavelController extends Controller
 
     }
 }
-
-export default ResponsavelController;

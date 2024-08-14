@@ -80,4 +80,17 @@ export default class Controller
             }
         });
     }
+
+    setValidaPeriodos(periodos = [])
+    {
+        periodos.map(item => {
+            if(item.length == 0){
+                throw new Error(`Período informado "${item}" é inválido!`)
+            }
+
+            if(!( ['manha', 'tarde', 'noite'].includes(item) )){
+                throw new Error(`Período informado "${item}" é inválido!`)
+            }
+        })
+    }
 }

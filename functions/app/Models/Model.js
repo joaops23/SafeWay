@@ -14,7 +14,7 @@ export default class Model
     async save(data)
     {
         // => Tratamento do campo id
-        data.id = (typeof id == "undefined") ? this.newID() : data.id;
+        data.id = (typeof data.id == "undefined") ? this.newID() : data.id;
 
         const cadastro = await this.insertUpdate(data, this.model, data.id)
         if(cadastro.status == 'Success'){
