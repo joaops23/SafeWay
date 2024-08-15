@@ -93,4 +93,19 @@ export default class Controller
             }
         })
     }
+
+    setValidaVeiculo(veiculo = [])
+    {
+        if(!("modelo" in veiculo) || veiculo.modelo == '') {
+            throw new Error("Modelo do veículo não informado!");
+        }
+
+        if(!("marca" in veiculo) || veiculo.marca == '') {
+            throw new Error("Marca do veículo não informada!");
+        }
+
+        if(!("ano" in veiculo) || veiculo.ano == '') {
+            throw new Error("Ano do veículo não informado!");
+        }
+    }
 }
