@@ -11,6 +11,12 @@ class ResponsavelController extends Controller
             return {status: 400, message: valida.message};
         }
 
+        const tratamento = await this.setTrataCamposCadastro();
+
+        if(!tratamento.status) {
+            return {status: 400, message: tratamento.message};
+        }
+
         return await ResponsavelModel.save(this.getObjectRegister());
     }
 
@@ -52,42 +58,71 @@ class ResponsavelController extends Controller
                 id = responsavel.id
             }
 
-            if(!id) {
-                // => se não for enviado o id, validar se os demais atributos de entrada foram enviados
-                //=> validar: nome
-                if(!('resp_nome' in responsavel) || responsavel.resp_nome == '') {
-                    throw new Error("Nome não informado / inválido!");
-                }
-    
-                //=> validar: CPF
-                if(!('resp_documento' in responsavel) || responsavel.resp_documento == '') {
-                    throw new Error("Documento não informado / inválido!");
-                }
-    
-                //=> validar: endereco
-                if(!('resp_endereco' in responsavel) || responsavel.resp_endereco == '') {
-                    throw new Error("Endereço não informado / inválido!");
-                }
-                this.setValidaEnredeco(responsavel.resp_endereco)
-                
-                //=> validar: contato
-                if(!('resp_contato' in responsavel) || responsavel.resp_contato == '') {
-                    throw new Error("Contato não informado / inválido!");
-                }
-                this.setValidaContato(responsavel.resp_contato)
-
-                //=> validar: pertencentes
-                if(!('resp_pertencentes' in responsavel) || responsavel.resp_pertencentes == '') {
-                    throw new Error("Pertencentes não informados / inválidos!");
-                }
-                this.setValidapertencentes(responsavel.resp_pertencentes)
+            // => se não for enviado o id, validar se os demais atributos de entrada foram enviados
+            //=> validar: nome
+            if(!('resp_nome' in responsavel) || responsavel.resp_nome == '') {
+                throw new Error("Nome não informado / inválido!");
             }
+
+            //=> validar: CPF
+            if(!('resp_documento' in responsavel) || responsavel.resp_documento == '') {
+                throw new Error("Documento não informado / inválido!");
+            }
+
+            //=> validar: endereco
+            if(!('resp_endereco' in responsavel) || responsavel.resp_endereco == '') {
+                throw new Error("Endereço não informado / inválido!");
+            }
+            this.setValidaEnredeco(responsavel.resp_endereco)
+            
+            //=> validar: contato
+            if(!('resp_contato' in responsavel) || responsavel.resp_contato == '') {
+                throw new Error("Contato não informado / inválido!");
+            }
+            this.setValidaContato(responsavel.resp_contato)
+
+            //=> validar: pertencentes
+            if(!('resp_pertencentes' in responsavel) || responsavel.resp_pertencentes == '') {
+                throw new Error("Pertencentes não informados / inválidos!");
+            }
+            this.setValidapertencentes(responsavel.resp_pertencentes)
 
             return {status: true}
         } catch(err) {
             return {status: false, message: err.message};
         }
+    }
 
+    async setTrataCamposCadastro()
+    {
+        let responsavel = this.getObjectRegister();
+
+        try{
+            // => trata documento do responsavel
+            responsavel.resp_documento = responsavel.resp_documento.replace(/\-|\./g, "") // Elimina a pontuação que foi enviada.
+    
+            const consultResponsavel = await ResponsavelModel.getResponsavelByDocumento(responsavel.resp_documento);
+
+            if(consultResponsavel.length && responsavel.id == null) {
+                throw new Error("Já existe um responsável cadastrado com este documento!");
+            }
+    
+            // => trata documento dos pertencentes/aluno
+            responsavel.resp_pertencentes = this.trataPertencentes(responsavel.resp_pertencentes)
+            
+            return {status: true}
+        } catch(err) {
+            return {status: false, message: err.message}
+        }
+    }
+
+    trataPertencentes(pertencentes)
+    {
+        pertencentes.map(item => {
+            item.documento = item.documento.replace(/\-|\./g, "");
+        });
+
+        return pertencentes;
     }
 }
 
